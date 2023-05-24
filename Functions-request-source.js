@@ -1,7 +1,7 @@
 // Get the arguments from the request config
 const username = args[0] // YouTube username
 const ethereumAddress = args[1] // Ethereum address
-const requiredStringIncluded = `This video accepts donations at ${ethereumAddress}` // String to target videos
+const requiredStringIncluded = `This video accepts donations through youtube-donate` // String to target videos
 const MAX_RESULTS = 10 // Number of videos to check
 
 // Initialize the result to -1 (error)
@@ -88,15 +88,55 @@ if (!videosRes.data.items || videosRes.data.items.length === 0) {
   console.log("No videos found for user:", username)
   result = 0
 } else {
-  // If there are videos, check if any of them include the required string
+  // If there are videos, check if any of them include the required string in their description
   const videos = videosRes.data.items
-  const videoTitles = videos.map((video) => video.snippet.title)
+  const videoDescriptions = videos.map((video) => video.snippet.description)
 
-  const res = videoTitles.some((title) => title.toLowerCase().includes(requiredStringIncluded.toLowerCase()))
+  const res = videoDescriptions.some((description) =>
+    description.toLowerCase().includes(requiredStringIncluded.toLowerCase())
+  )
 
   // Set the result based on whether the required string is found or not
   result = res ? 1 : 0
 }
 
+// Function to get the list of YouTube usernames from AWS database
+const getYoutubeNamesFromApi = () =>
+  Functions.makeHttpRequest({
+    url: "https://e3qo0ohe2c.execute-api.us-west-1.amazonaws.com/Prod/youtube-donations",
+    headers: {
+      "x-api-key": secrets.awsApiKey,
+    },
+  })
+
+// Request the list of YouTube usernames from AWS database
+const youtubeNamesRes = await new Promise((resolve, reject) => {
+  getYoutubeNamesFromApi().then((res) => {
+    if (!res.error) {
+      resolve(res)
+    } else {
+      reject(res)
+    }
+  })
+})
+
+// Throw an error if the request has failed
+if (youtubeNamesRes.error || !youtubeNamesRes.data) {
+  throw Error("API Gateway request failed - could not get list of YouTube usernames")
+}
+
+// Get the list of YouTube usernames from the response
+const youtubeNames = youtubeNamesRes.data || []
+
+// Log the list of YouTube usernames
+console.log("List of YouTube usernames:", youtubeNames)
+
 // Return the result along with the username and ethereumAddress
-return Functions.encodeString(`${result},${username},${ethereumAddress}`)
+return Functions.encodeString(`${result},${username},${ethereumAddress},${youtubeNames}`)
+
+// return Buffer.concat([
+//   Functions.encodeString(result),
+//   Functions.encodeString(username),
+//   Functions.encodeString(ethereumAddress),
+//   Functions.encodeString(youtubeNames),
+// ])

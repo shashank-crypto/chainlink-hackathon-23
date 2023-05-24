@@ -25,7 +25,7 @@
     - Use `const requiredStringIncluded = "This video accepts donations at ${ethereumAddress}"` for quick testing<br><br>
 6. run `npx hardhat functions-simulate` to make an api call to youtube and simulate the response in the sandbox<br><br>
 
-## This was built with Chainlink Functions Start Kit
+## This was built with Chainlink Functions Starter Kit
 
 Please refer to the original repo for more commands and documentation: https://github.com/smartcontractkit/functions-hardhat-starter-kit
 
