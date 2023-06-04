@@ -10,9 +10,8 @@ chrome.runtime.onConnect.addListener((port) => {
             try {
                 const youtubeName = request.youtubeName;
                 console.log(youtubeName);
-                const response = await fetch(
-                    `https://e3qo0ohe2c.execute-api.us-west-1.amazonaws.com/Prod/youtube-donations/${youtubeName}`
-                );
+                const response = await fetch();
+                /*"endpoint here"*/
                 const data = await response.json();
                 console.log(data);
                 const parsedBody = JSON.parse(data.body);
