@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-import {Functions, FunctionsClient} from "./dev/functions/FunctionsClient.sol";
+import {Functions, FunctionsClient} from "../dev/functions/FunctionsClient.sol";
 // import "@chainlink/contracts/src/v0.8/dev/functions/FunctionsClient.sol"; // Once published
 import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-interface IYoutubeCoin is ERC20 {
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-    function transfer(address recipient, uint256 amount) external returns (bool);
+interface IYoutubeCoin is IERC20 {
+    function mint(address to, uint256 amount) external;
+    // function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    // function transfer(address recipient, uint256 amount) external returns (bool);
 }
 
 /**
@@ -16,7 +17,7 @@ interface IYoutubeCoin is ERC20 {
  * @notice This contract is a demonstration of using Functions.
  * @notice NOT FOR PRODUCTION USE
  */
-contract FunctionsConsumer is FunctionsClient, ConfirmedOwner {
+contract ContributeYoutubes is FunctionsClient, ConfirmedOwner {
   using Functions for Functions.Request;
 
   bytes32 public latestRequestId;
@@ -60,7 +61,7 @@ contract FunctionsConsumer is FunctionsClient, ConfirmedOwner {
     }
     if (args.length > 0) req.addArgs(args);
 
-    bytes32 assignr responedReqID = sendRequest(req, subscriptionId, gasLimit);
+    bytes32 assignedReqID = sendRequest(req, subscriptionId, gasLimit);
     latestRequestId = assignedReqID;
     return assignedReqID;
   }

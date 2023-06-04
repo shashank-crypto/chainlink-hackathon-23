@@ -1,5 +1,5 @@
 const fs = require("fs")
-const { YOUTUBE_USERNAME, ETHEREUM_ADDRESS } = require("./helper-hardhat-config")
+const { METHOD, USERNAME, ETHEREUM_ADDRESS, USERID } = require("./helper-hardhat-config")
 
 // Loads environment variables from .env.enc file (if it exists)
 require("@chainlink/env-enc").config()
